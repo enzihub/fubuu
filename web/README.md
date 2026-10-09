@@ -1,31 +1,15 @@
-# fubuu-web
+# Fubuu web
 
-Configuration:
+Next.js 14 app for [Fubuu](../README.md): Clerk sign-in, the onboarding dashboard (connect X / LinkedIn / Threads, WhatsApp number, bio, custom prompt), settings, pricing and Stripe billing. Data lives in Postgres through Drizzle ORM and the Neon serverless driver.
 
-```yaml
-!!python/object:shadowstone_cli.models.config.Component
-details:
-  port: '3000'
-  framework: react
+```bash
+npm install
+cp .env.example .env.local     # fill in
+npm run dev
 ```
 
-```
-npm run stripe:listen
-```
+Local Postgres: `docker compose -f src/db/docker-compose.yml up -d`, then set `DATABASE_URL=postgresql://postgres:postgres@db.localtest.me:4444/main` and `LOCAL_DB_HTTP_ENDPOINT=http://127.0.0.1:4444/sql`, and run `npm run db:migrate:dev`.
 
-```
-stripe fixtures src/app/(billing)/_utils/stripe-fixtures.json --api-key <STRIPE_KEY(sk_test_)>
-```
+Stripe: `stripe fixtures src/app/\(billing\)/_utils/stripe-fixtures.json` creates the products and prices; `npm run stripe:listen` forwards webhooks.
 
-If the above doesn't work (in some shells due to parenthesis), escape them with below
-
-```
-stripe fixtures src/app/\(billing\)/_utils/stripe-fixtures.json --api-key <STRIPE_KEY(sk_test_)>
-```
-
-### ORM
-
-npm i drizzle-orm
-npm i -D drizzle-kit
-npm i @neondatabase/serverless
-npm i dotenv
+`FUBUU_DEMO=1` swaps Clerk for an invented local user (`src/demo/`). See `../demo/run.sh`.

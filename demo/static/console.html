@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fubuu local demo console</title>
+<style>
+@font-face{font-family:Inter;src:url(/static/Inter-latin.woff2) format('woff2');font-weight:100 900}
+@font-face{font-family:'Instrument Serif';src:url(/static/InstrumentSerif.woff2) format('woff2')}
+:root{--bg:#050505;--card:#0f1013;--line:#1f2127;--ink:#f4f4f2;--mute:#9a9ca3;--blue:#0059ff;--green:#1f8f5a}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(1200px 500px at 70% -10%,#0b1f55 0,transparent 60%),var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif;min-height:100vh;padding:24px 36px 28px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+header img{height:30px}
+header .tag{margin-left:auto;color:var(--mute);font-size:13px;border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+h1{font:400 34px/1.1 'Instrument Serif',serif;letter-spacing:-.01em}
+.grid{display:grid;grid-template-columns:420px 1fr;gap:22px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;height:596px}
+.panel h2{font:600 13px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.chat{flex:1;padding:18px;display:flex;flex-direction:column;gap:10px;overflow:auto;background:linear-gradient(#0c0d10,#0a0b0d)}
+.msg{max-width:84%;padding:10px 13px;border-radius:14px;white-space:pre-wrap;font-size:14px;animation:pop .25s ease}
+.me{align-self:flex-end;background:#0b3b2a;border-bottom-right-radius:4px}
+.bot{align-self:flex-start;background:#1a1c22;border-bottom-left-radius:4px}
+.bot b{color:#8fb4ff;font-weight:600}
+.compose{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.compose textarea{flex:1;background:#16181d;border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:10px 12px;font:14px Inter;resize:none;height:84px}
+.compose button{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:0 18px;font:600 14px Inter;cursor:pointer}
+.feed{flex:1;overflow:auto}
+.post{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);animation:pop .3s ease}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffb36b,#ff6b8b);display:grid;place-items:center;font-weight:700;color:#1b0b10}
+.who{font-weight:600}.who span{color:var(--mute);font-weight:400}
+.text{white-space:pre-wrap;margin-top:4px;font-size:15.5px}
+.badge{display:inline-block;margin-top:8px;font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.empty{color:var(--mute);padding:40px 20px;text-align:center}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <img src="/static/fubuu-icon.svg" alt="Fubuu">
+  <span class="tag">Local demo · WhatsApp and X are stubs on 127.0.0.1 · invented data</span>
+</header>
+<div class="grid">
+  <section class="panel">
+    <h2><span class="dot"></span>WhatsApp (stub) · Maya Ortiz</h2>
+    <div class="chat" id="chat"></div>
+    <form class="compose" id="f">
+      <textarea id="t" placeholder="Say what's on your mind…"></textarea>
+      <button>Send</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h2><span class="dot" style="background:var(--blue)"></span>Posted by the Fubuu backend · X and LinkedIn stubs</h2>
+    <div class="feed" id="feed"><p class="empty">Nothing posted yet. Send a thought on the left.</p></div>
+  </section>
+</div>
+<script>
+const FROM = 'whatsapp:+15555550142';
+const chat = document.getElementById('chat'), feed = document.getElementById('feed');
+const seenOut = new Set(), seenTl = new Set();
+function add(cls, html){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;chat.appendChild(d);chat.scrollTop=1e9}
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+async function poll(){
+  const [out, tl] = await Promise.all([fetch('/_outbox').then(r=>r.json()), fetch('/_timeline').then(r=>r.json())]);
+  out.forEach((m,i)=>{ if(seenOut.has(i)) return; seenOut.add(i);
+    add('bot', esc(m.body||'').replace(/^(Twitter|LinkedIn|Threads) Posted/, '<b>$1 Posted</b>')); });
+  tl.forEach((p,i)=>{ if(seenTl.has(i)) return; seenTl.add(i);
+    if(feed.querySelector('.empty')) feed.innerHTML='';
+    const el=document.createElement('article'); el.className='post';
+    el.innerHTML=`<div class="avatar">MO</div><div><div class="who">Maya Ortiz <span>· ${p.platform==='X'?'@maya_builds':'Indie founder'} · now</span></div><div class="text">${esc(p.text)}</div><span class="badge">${p.platform} (stub)</span></div>`;
+    feed.prepend(el); });
+}
+document.getElementById('f').onsubmit = async e => {
+  e.preventDefault(); const t=document.getElementById('t'); const body=t.value.trim(); if(!body) return;
+  add('me', esc(body)); t.value='';
+  await fetch('/_send', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:new URLSearchParams({From:FROM, NumMedia:'0', Body:body})});
+  poll();
+};
+setInterval(poll, 500); poll();
+</script>
+</body>
+</html>

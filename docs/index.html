@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fubuu: say it out loud, post it everywhere</title>
+<meta name="description" content="Open-source app that turns WhatsApp voice notes into posts on X, LinkedIn and Threads. FastAPI + Next.js, MIT licensed, by Enzi Studio.">
+<meta property="og:title" content="Fubuu: say it out loud, post it everywhere">
+<meta property="og:description" content="WhatsApp voice notes in. Posts on X and LinkedIn out. Open source, MIT.">
+<meta property="og:image" content="https://enzihub.github.io/fubuu/og.png">
+<meta property="og:url" content="https://enzihub.github.io/fubuu/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://enzihub.github.io/fubuu/og.png">
+<link rel="icon" href="img/fubuu.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:Inter;src:url(fonts/Inter-latin.woff2) format('woff2');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Instrument Serif';src:url(fonts/InstrumentSerif.woff2) format('woff2');font-display:swap}
+:root{--bg:#050608;--card:#0e1013;--line:rgba(255,255,255,.09);--ink:#f4f4f2;--mute:#a3a6ae;--dim:#6f737c;--blue:#0059ff;--sky:#8fb4ff;--green:#2fd17a}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(5,6,8,.72);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
+nav img{height:26px}
+nav .links{margin-left:auto;display:flex;gap:22px;font-size:15px;color:var(--mute)}
+nav .links a{text-decoration:none}
+nav .links a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:14px;padding:12px 20px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s}
+.btn.primary{background:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(0,89,255,.35)}
+.btn.primary:hover{transform:translateY(-1px);box-shadow:0 14px 40px rgba(0,89,255,.5)}
+.btn.ghost{border:1px solid var(--line);color:var(--ink);background:rgba(255,255,255,.03)}
+.btn.ghost:hover{background:rgba(255,255,255,.07)}
+.hero{position:relative;padding:88px 0 40px;overflow:hidden}
+.glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.7}
+.hero .g1{width:640px;height:460px;right:-120px;top:-180px;background:#0b3bff}
+.hero .g2{width:420px;height:320px;right:120px;top:300px;background:#7a2cff;opacity:.35}
+.hero .g3{width:360px;height:300px;left:-160px;top:380px;background:#11a36a;opacity:.25}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13.5px;color:var(--mute);background:rgba(255,255,255,.03)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+h1{font-size:clamp(46px,7vw,84px);line-height:.98;letter-spacing:-.01em;margin:22px 0 22px}
+h1 em{color:var(--sky)}
+.lede{font-size:19px;color:var(--mute);max-width:520px}
+.typed{color:var(--ink);border-right:2px solid var(--sky);padding-right:2px;white-space:nowrap}
+.cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+.chat{position:relative}
+.bubble{border-radius:20px;padding:16px 18px;font-size:16px;line-height:1.5;border:1px solid var(--line)}
+.bubble.in{background:#0b3b2a;margin-left:48px;border-bottom-right-radius:6px}
+.lbl{font:600 11.5px Inter;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin:0 0 8px 4px}
+.post{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;grid-template-columns:44px 1fr;gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffb36b,#ff6b8b);display:grid;place-items:center;font-weight:700;color:#1b0b10}
+.who{font-weight:600}.who span{color:var(--dim);font-weight:400}
+.ptxt{margin-top:4px;white-space:pre-line}
+section{padding:72px 0;position:relative}
+h2{font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-.01em;margin-bottom:14px}
+.sub{color:var(--mute);max-width:640px}
+.frame{border-radius:20px;overflow:hidden;border:1px solid var(--line);box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.5);background:#000}
+.demo{margin-top:34px}
+.cap{font-size:14px;color:var(--dim);margin-top:12px;text-align:center}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:36px}
+.step{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:18px;padding:22px 20px;transition:border-color .3s,transform .3s}
+.step:hover{border-color:rgba(143,180,255,.4);transform:translateY(-2px)}
+.n{font:600 12px Inter;letter-spacing:.12em;color:var(--sky)}
+.step h3{font-size:19px;margin:10px 0 8px;letter-spacing:-.01em}
+.step p{font-size:15px;color:var(--mute)}
+.step code{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font:500 12.5px ui-monospace,monospace;color:#a6b6d9}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-top:56px}
+.feat.rev .txt{order:2}
+.feat h3{font-size:30px;line-height:1.1;margin-bottom:12px}
+.feat p{color:var(--mute)}
+.feat ul{margin-top:14px;list-style:none;color:var(--mute);font-size:15.5px}
+.feat li{padding-left:22px;position:relative;margin:6px 0}
+.feat li:before{content:"";position:absolute;left:2px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--blue)}
+.phone{max-width:300px;margin:0 auto;border-radius:34px;border:8px solid #16181d}
+pre{-webkit-overflow-scrolling:touch;background:#0b0c0f;border:1px solid var(--line);border-radius:16px;padding:20px 22px;overflow-x:auto;font:14px/1.7 ui-monospace,monospace;color:#d8dbe2;margin-top:24px}
+pre .c{color:var(--dim)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.tile{border:1px solid var(--line);border-radius:16px;padding:18px 18px;background:rgba(255,255,255,.02)}
+.tile b{display:block;margin-bottom:4px}
+.tile span{color:var(--mute);font-size:15px}
+footer{border-top:1px solid var(--line);padding:36px 0 48px;color:var(--dim);font-size:14.5px}
+footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+footer img{height:22px}
+footer .r{margin-left:auto}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+@media (max-width:900px){
+ .hero-grid,.feat{grid-template-columns:1fr}
+ .feat.rev .txt{order:0}
+ .steps{grid-template-columns:1fr 1fr}
+ .grid3{grid-template-columns:1fr}
+ nav .links a.hide{display:none}
+ .hero{padding-top:56px}
+ .bubble.in{margin-left:24px}
+}
+@media (max-width:520px){
+ pre{font-size:12.5px;padding:16px}
+ footer .r{margin-left:0}
+ .steps{grid-template-columns:1fr}
+ nav .links{gap:14px}
+ .typed{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .reveal{opacity:1;transform:none;transition:none}
+ .btn,.step{transition:none}
+ .typed{border-right:0}
+}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+ <a href="#top" aria-label="Fubuu home"><img src="img/fubuu.svg" alt="Fubuu"></a>
+ <div class="links">
+  <a href="#demo">Demo</a><a href="#how" class="hide">How it works</a><a href="#start">Run it</a>
+  <a href="https://github.com/enzihub/fubuu">GitHub</a>
+ </div>
+</div></nav>
+
+<header class="hero" id="top">
+ <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+ <div class="wrap hero-grid">
+  <div>
+   <span class="eyebrow"><span class="dot"></span>Open source · MIT · by Enzi Studio</span>
+   <h1 class="serif">Say it out loud.<br><em>Post it everywhere.</em></h1>
+   <p class="lede">Send a WhatsApp voice note. Fubuu transcribes it, rewrites it in your voice and posts it to <span class="typed" id="typed">X and LinkedIn</span>.</p>
+   <div class="cta">
+    <a class="btn primary" href="https://github.com/enzihub/fubuu">View on GitHub</a>
+    <a class="btn ghost" href="#start">Run the demo locally</a>
+   </div>
+  </div>
+  <div class="chat">
+   <div class="lbl">WhatsApp · 9:41</div>
+   <div class="bubble in">ok so I realised today that most founders don't have a marketing problem, they have a consistency problem. You don't need a viral thread…</div>
+   <div class="post"><div class="av">MO</div><div>
+    <div class="who">Maya Ortiz <span>@maya_builds · now</span></div>
+    <div class="ptxt">Most founders don't have a marketing problem, they have a consistency problem.
+
+→ You don't need a viral thread.
+
+→ Tiny posts, every day, beat one big launch.</div></div></div>
+   <p class="cap" style="text-align:left;margin-left:4px">Real output from the local demo. Maya is invented.</p>
+  </div>
+ </div>
+</header>
+
+<section id="demo"><div class="wrap">
+ <div class="reveal">
+  <h2 class="serif">A note goes in. Posts come out.</h2>
+  <p class="sub">This is the real backend running on a laptop. WhatsApp, X, LinkedIn and the AI model are local stand-ins, so you can try the whole loop without a single account.</p>
+ </div>
+ <div class="frame demo reveal"><img src="img/demo.gif" width="960" height="569" alt="Animated: a note is typed into the WhatsApp stub; the Fubuu backend replies, writes a post for X and one for LinkedIn and posts both."></div>
+ <p class="cap">Recorded headless from <code>demo/run.sh</code>. All people and posts are invented.</p>
+</div></section>
+
+<section id="how"><div class="wrap">
+ <div class="reveal">
+  <h2 class="serif">How it works</h2>
+  <p class="sub">One WhatsApp message, up to three platforms. Every step is code in the repo.</p>
+ </div>
+ <div class="steps">
+  <div class="step reveal"><div class="n">01 · CAPTURE</div><h3>You send a thought</h3><p>A voice note or a text to your Fubuu WhatsApp number. Twilio forwards it to the backend.</p><code>POST /whatsapp-webhook</code></div>
+  <div class="step reveal"><div class="n">02 · UNDERSTAND</div><h3>Fubuu transcribes it</h3><p>Audio becomes text with Whisper. Your plan and daily limits are checked in Redis.</p><code>FFmpeg · Whisper · Redis</code></div>
+  <div class="step reveal"><div class="n">03 · WRITE</div><h3>AI writes the post</h3><p>Your bio and optional prompt shape a hook-first post for each platform.</p><code>OpenAI · your prompt</code></div>
+  <div class="step reveal"><div class="n">04 · PUBLISH</div><h3>Posted and confirmed</h3><p>Fubuu posts with your connected accounts, then replies on WhatsApp with what went out.</p><code>X · LinkedIn · Threads</code></div>
+ </div>
+</div></section>
+
+<section><div class="wrap">
+ <div class="feat reveal">
+  <div class="txt">
+   <h3 class="serif">Set up once, in five steps</h3>
+   <p>The dashboard walks each new user through everything Fubuu needs, and ticks each step off as it is done.</p>
+   <ul><li>Connect X, LinkedIn and Threads with OAuth (via Clerk)</li><li>Add the WhatsApp number you will talk from</li><li>Describe yourself so posts sound like you</li><li>Optionally rewrite the prompt itself</li><li>Send your first voice note</li></ul>
+  </div>
+  <div class="frame"><img src="img/card.webp" width="820" height="1097" alt="The onboarding card: X and LinkedIn connected, WhatsApp number and bio filled in."></div>
+ </div>
+ <div class="feat rev reveal">
+  <div class="txt">
+   <h3 class="serif">Written like you, per platform</h3>
+   <p>Short and hook-first for X and Threads, a fuller post with a question for LinkedIn. Daily limits per platform keep your feed sane, and three gentle prompts a day, in your time zone, keep the habit going.</p>
+  </div>
+  <div class="frame"><img src="img/console.webp" width="1600" height="949" alt="The demo console: a WhatsApp note on the left, the X and LinkedIn posts it produced on the right."></div>
+ </div>
+ <div class="feat reveal">
+  <div class="txt">
+   <h3 class="serif">Works on the phone you already hold</h3>
+   <p>There is no new app to open. Users talk to WhatsApp; the web app is only for setup, settings and billing (Stripe checkout and customer portal).</p>
+  </div>
+  <div class="frame phone"><img src="img/mobile.webp" width="600" height="1298" alt="The Fubuu dashboard on a phone."></div>
+ </div>
+</div></section>
+
+<section id="start"><div class="wrap reveal">
+ <h2 class="serif">Run it on your machine</h2>
+ <p class="sub">Docker, Node 20+ and uv. Demo mode needs no accounts: every outside service is a local stand-in and no message leaves your machine.</p>
+<pre><span class="c"># clone and start everything</span>
+git clone \
+  https://github.com/enzihub/fubuu.git
+cd fubuu
+bash demo/run.sh
+
+<span class="c"># type a thought, press Send</span>
+http://127.0.0.1:18793/console
+<span class="c"># the web app, as an invented user</span>
+http://127.0.0.1:3000/dashboard</pre>
+ <div class="grid3">
+  <div class="tile"><b>core/</b><span>FastAPI: webhook, transcription, writing, posting, limits, Celery reminders.</span></div>
+  <div class="tile"><b>web/</b><span>Next.js 14: Clerk sign-in, onboarding, settings, Stripe billing, Drizzle on Postgres.</span></div>
+  <div class="tile"><b>demo/</b><span>Docker services, seed data and fake X, LinkedIn, Twilio, OpenAI, Clerk and Stripe.</span></div>
+ </div>
+</div></section>
+
+<footer><div class="wrap">
+ <img src="img/fubuu.svg" alt="Fubuu">
+ <span>Built by Enzi Studio in 2025, shared as-is. MIT licence.</span>
+ <a class="r" href="https://github.com/enzihub/fubuu">github.com/enzihub/fubuu</a>
+</div></footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) { els.forEach(function(e){e.classList.add('in')}); }
+  else {
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); }, {rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(e){ io.observe(e); });
+  }
+  if (reduce) return;
+  var t = document.getElementById('typed');
+  var words = ['X and LinkedIn', 'X', 'LinkedIn', 'Threads', 'X and LinkedIn'];
+  var i = 0, j = words[0].length, del = true;
+  function tick(){
+    var w = words[i];
+    if (del) { j--; t.textContent = w.slice(0, j); if (j === 0) { del = false; i = (i + 1) % words.length; } setTimeout(tick, 45); }
+    else { var n = words[i]; j++; t.textContent = n.slice(0, j); if (j === n.length) { del = true; setTimeout(tick, 1900); return; } setTimeout(tick, 80); }
+  }
+  setTimeout(tick, 2600);
+})();
+</script>
+</body>
+</html>

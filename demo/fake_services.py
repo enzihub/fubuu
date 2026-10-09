@@ -21,13 +21,18 @@ replies). The tweets it writes are invented demo content.
 from __future__ import annotations
 
 import json
+import mimetypes
 import os
 import re
 import time
+import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 PORT = int(os.getenv("FAKE_PORT", "18793"))
+CORE_URL = os.getenv("FUBUU_CORE_URL", "http://127.0.0.1:18794")
+STATIC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+ICON = os.path.join(os.path.dirname(STATIC), "..", "web", "public", "images", "fubuu-icon.svg")
 
 TIMELINE: list[dict] = []   # posts that "went out" to X / LinkedIn / Threads
 OUTBOX: list[dict] = []     # WhatsApp messages Fubuu sent back to the user
@@ -72,8 +77,24 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     # ---- routes
+    def _file(self, fp):
+        data = open(fp, "rb").read()
+        self.send_response(200)
+        self.send_header("Content-Type", mimetypes.guess_type(fp)[0] or "application/octet-stream")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
+
     def do_GET(self):
         path = urlparse(self.path).path
+        if path in ("/", "/console"):
+            return self._file(os.path.join(STATIC, "console.html"))
+        if path == "/static/fubuu-icon.svg":
+            return self._file(ICON)
+        if path.startswith("/static/") and "/.." not in path:
+            fp = os.path.join(STATIC, os.path.basename(path))
+            if os.path.isfile(fp):
+                return self._file(fp)
         if path == "/_timeline":
             return self._json(TIMELINE)
         if path == "/_outbox":
@@ -99,7 +120,20 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         path = urlparse(self.path).path
         raw = self._body()
-        ctype = self.headers.get("Content-Type", "")
+
+        if path == "/_reset":
+            TIMELINE.clear(); OUTBOX.clear()
+            return self._json({"ok": True})
+        if path == "/_send":
+            # The console's "phone": forward the message to the real backend
+            # exactly the way Twilio would deliver a WhatsApp message.
+            req = urllib.request.Request(f"{CORE_URL}/whatsapp-webhook", data=raw, method="POST",
+                                         headers={"Content-Type": "application/x-www-form-urlencoded"})
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    return self._json({"status": r.status})
+            except Exception as e:  # surface backend errors to the console
+                return self._json({"error": str(e)}, 502)
 
         if path == "/v1/chat/completions":
             req = json.loads(raw or b"{}")
