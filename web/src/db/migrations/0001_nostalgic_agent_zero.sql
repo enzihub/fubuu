@@ -1,0 +1,1 @@
+ALTER TABLE "user_prefs" ADD COLUMN "last_message_timestamp_utc" timestamp;

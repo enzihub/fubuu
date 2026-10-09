@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1739271571711,
+      "tag": "0000_watery_rocket_raccoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1741612257237,
+      "tag": "0001_nostalgic_agent_zero",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741665278793,
+      "tag": "0002_concerned_dragon_lord",
+      "breakpoints": true
+    }
+  ]
+}

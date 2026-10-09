@@ -1,0 +1,20 @@
+# deps and builds
+node_modules/
+.next/
+out/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# env files (only the .example files are tracked)
+.env
+.env.*
+!.env.example
+!demo/demo.env
+
+# misc
+.DS_Store
+*.log
+*.bak
+voice_message.*
