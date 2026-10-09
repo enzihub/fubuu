@@ -7,10 +7,10 @@
 <meta name="description" content="Open-source app that turns WhatsApp voice notes into posts on X, LinkedIn and Threads. FastAPI + Next.js, MIT licensed, by Enzi Studio.">
 <meta property="og:title" content="Fubuu: say it out loud, post it everywhere">
 <meta property="og:description" content="WhatsApp voice notes in. Posts on X and LinkedIn out. Open source, MIT.">
-<meta property="og:image" content="https://enzihub.github.io/fubuu/og.png">
-<meta property="og:url" content="https://enzihub.github.io/fubuu/">
+<meta property="og:image" content="https://raw.githubusercontent.com/enzihub/fubuu/main/docs/og.png">
+<meta property="og:url" content="https://github.com/enzihub/fubuu">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://enzihub.github.io/fubuu/og.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/enzihub/fubuu/main/docs/og.png">
 <link rel="icon" href="img/fubuu.svg" type="image/svg+xml">
 <style>
 @font-face{font-family:Inter;src:url(fonts/Inter-latin.woff2) format('woff2');font-weight:100 900;font-display:swap}
@@ -20,10 +20,10 @@
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}
-img{max-width:100%;display:block}
+img{max-width:100%;height:auto;display:block}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400}
-nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(5,6,8,.72);border-bottom:1px solid var(--line)}
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(5,6,8,.94);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
 nav img{height:26px}
 nav .links{margin-left:auto;display:flex;gap:22px;font-size:15px;color:var(--mute)}
@@ -32,7 +32,7 @@ nav .links a:hover{color:var(--ink)}
 .btn{display:inline-flex;align-items:center;gap:8px;border-radius:14px;padding:12px 20px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .2s,box-shadow .2s,background .2s}
 .btn.primary{background:var(--blue);color:#fff;box-shadow:0 10px 30px rgba(0,89,255,.35)}
 .btn.primary:hover{transform:translateY(-1px);box-shadow:0 14px 40px rgba(0,89,255,.5)}
-.btn.ghost{border:1px solid var(--line);color:var(--ink);background:rgba(255,255,255,.03)}
+.btn.ghost{border:1px solid rgba(255,255,255,.22);color:var(--ink);background:rgba(255,255,255,.03)}
 .btn.ghost:hover{background:rgba(255,255,255,.07)}
 .hero{position:relative;padding:88px 0 40px;overflow:hidden}
 .glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:.7}
@@ -44,34 +44,34 @@ nav .links a:hover{color:var(--ink)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
 h1{font-size:clamp(46px,7vw,84px);line-height:.98;letter-spacing:-.01em;margin:22px 0 22px}
 h1 em{color:var(--sky)}
-.lede{font-size:19px;color:var(--mute);max-width:520px}
+.lede{text-wrap:pretty;font-size:19px;color:var(--mute);max-width:520px}
 .typed{color:var(--ink);border-right:2px solid var(--sky);padding-right:2px;white-space:nowrap}
 .cta{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
 .chat{position:relative}
 .bubble{border-radius:20px;padding:16px 18px;font-size:16px;line-height:1.5;border:1px solid var(--line)}
 .bubble.in{background:#0b3b2a;margin-left:48px;border-bottom-right-radius:6px}
-.lbl{font:600 11.5px Inter;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;margin:0 0 8px 4px}
+.lbl{font:600 13px Inter;letter-spacing:.02em;color:var(--mute);margin:0 0 8px 4px}
 .post{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;grid-template-columns:44px 1fr;gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 .av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ffb36b,#ff6b8b);display:grid;place-items:center;font-weight:700;color:#1b0b10}
 .who{font-weight:600}.who span{color:var(--dim);font-weight:400}
 .ptxt{margin-top:4px;white-space:pre-line}
 section{padding:72px 0;position:relative}
-h2{font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-.01em;margin-bottom:14px}
-.sub{color:var(--mute);max-width:640px}
+h2{text-wrap:balance;font-size:clamp(34px,5vw,52px);line-height:1.04;letter-spacing:-.01em;margin-bottom:14px}
+.sub{text-wrap:pretty;color:var(--mute);max-width:640px}
 .frame{border-radius:20px;overflow:hidden;border:1px solid var(--line);box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.5);background:#000}
 .demo{margin-top:34px}
-.cap{font-size:14px;color:var(--dim);margin-top:12px;text-align:center}
+.cap{font-size:14px;color:var(--dim);margin-top:12px}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:36px}
 .step{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:18px;padding:22px 20px;transition:border-color .3s,transform .3s}
 .step:hover{border-color:rgba(143,180,255,.4);transform:translateY(-2px)}
 .n{font:600 12px Inter;letter-spacing:.12em;color:var(--sky)}
 .step h3{font-size:19px;margin:10px 0 8px;letter-spacing:-.01em}
-.step p{font-size:15px;color:var(--mute)}
+.step p{font-size:15px;color:var(--mute);text-wrap:pretty}
 .step code{display:block;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font:500 12.5px ui-monospace,monospace;color:#a6b6d9}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;margin-top:56px}
 .feat.rev .txt{order:2}
-.feat h3{font-size:30px;line-height:1.1;margin-bottom:12px}
-.feat p{color:var(--mute)}
+.feat h3{text-wrap:balance;font-size:30px;line-height:1.1;margin-bottom:12px}
+.feat p{color:var(--mute);text-wrap:pretty}
 .feat ul{margin-top:14px;list-style:none;color:var(--mute);font-size:15.5px}
 .feat li{padding-left:22px;position:relative;margin:6px 0}
 .feat li:before{content:"";position:absolute;left:2px;top:10px;width:8px;height:8px;border-radius:50%;background:var(--blue)}
@@ -82,6 +82,7 @@ pre .c{color:var(--dim)}
 .tile{border:1px solid var(--line);border-radius:16px;padding:18px 18px;background:rgba(255,255,255,.02)}
 .tile b{display:block;margin-bottom:4px}
 .tile span{color:var(--mute);font-size:15px}
+.end{padding-top:24px;text-align:left}
 footer{border-top:1px solid var(--line);padding:36px 0 48px;color:var(--dim);font-size:14.5px}
 footer .wrap{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 footer img{height:22px}
@@ -98,11 +99,46 @@ footer .r{margin-left:auto}
  .bubble.in{margin-left:24px}
 }
 @media (max-width:520px){
- pre{font-size:12.5px;padding:16px}
+ body{font-size:16px}
+ nav{position:relative}
+ :root{--mute:#b9bdc6;--dim:#8d929c;--line:rgba(255,255,255,.13)}
+ .wrap{padding:0 20px}
+ nav .wrap{height:58px;gap:12px}
+ nav img{height:24px}
+ nav .links{gap:4px;font-size:15px}
+ nav .links a{padding:10px 8px}
+ nav .links a[href="#start"]{display:none}
+ .hero{padding:36px 0 8px}
+ .hero .g1{width:420px;height:340px;right:-160px;top:-160px}
+ .eyebrow{font-size:12.5px;padding:5px 12px}
+ h1{font-size:44px;margin:16px 0 14px}
+ .lede{font-size:16.5px}
+ .cta{display:grid;grid-template-columns:1fr;gap:10px;margin-top:24px}
+ .cta .btn{justify-content:center;padding:14px 18px}
+ .hero-grid{gap:34px}
+ .bubble{font-size:15px;padding:14px 16px}
+ .bubble.in{margin-left:28px}
+ .post{grid-template-columns:40px 1fr;padding:16px;gap:10px;margin-top:16px}
+ .av{width:40px;height:40px;font-size:14px}
+ .who{font-size:15px}.who span{display:block;font-size:13.5px}
+ .ptxt{font-size:15.5px;margin-top:6px}
+ section{padding:44px 0}
+ h2{font-size:38px}
+ .sub{font-size:16px}
+ .demo{margin-top:28px;max-width:400px;margin-left:auto;margin-right:auto}
+ .feat .frame:not(.phone){max-width:400px;margin:0 auto}
+ .steps{grid-template-columns:1fr;gap:12px;margin-top:26px}
+ .step{padding:18px 18px}
+ .step h3{font-size:18px;margin:8px 0 6px}
+ .feat{gap:22px;margin-top:40px}
+ .feat:first-child{margin-top:0}
+ .feat h3{font-size:28px}
+ .phone{max-width:270px;border-width:7px;border-radius:30px}
+ pre{font-size:12.5px;padding:16px;margin-top:20px}
+ .grid3{gap:10px;margin-top:20px}
+ .tile{padding:14px 16px}
+ footer{padding:28px 0 36px}
  footer .r{margin-left:0}
- .steps{grid-template-columns:1fr}
- nav .links{gap:14px}
- .typed{white-space:normal}
 }
 @media (prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}
@@ -116,7 +152,7 @@ footer .r{margin-left:auto}
 <nav><div class="wrap">
  <a href="#top" aria-label="Fubuu home"><img src="img/fubuu.svg" alt="Fubuu"></a>
  <div class="links">
-  <a href="#demo">Demo</a><a href="#how" class="hide">How it works</a><a href="#start">Run it</a>
+  <a href="#demo">Demo</a><a href="#how" class="hide">How it works</a><a href="#start">Run locally</a>
   <a href="https://github.com/enzihub/fubuu">GitHub</a>
  </div>
 </div></nav>
@@ -134,7 +170,7 @@ footer .r{margin-left:auto}
    </div>
   </div>
   <div class="chat">
-   <div class="lbl">WhatsApp · 9:41</div>
+   <div class="lbl">WhatsApp · 9:41 am</div>
    <div class="bubble in">ok so I realised today that most founders don't have a marketing problem, they have a consistency problem. You don't need a viral thread…</div>
    <div class="post"><div class="av">MO</div><div>
     <div class="who">Maya Ortiz <span>@maya_builds · now</span></div>
@@ -143,7 +179,7 @@ footer .r{margin-left:auto}
 → You don't need a viral thread.
 
 → Tiny posts, every day, beat one big launch.</div></div></div>
-   <p class="cap" style="text-align:left;margin-left:4px">Real output from the local demo. Maya is invented.</p>
+   <p class="cap" style="margin-left:4px">Real output from the local demo. Maya is invented.</p>
   </div>
  </div>
 </header>
@@ -153,7 +189,7 @@ footer .r{margin-left:auto}
   <h2 class="serif">A note goes in. Posts come out.</h2>
   <p class="sub">This is the real backend running on a laptop. WhatsApp, X, LinkedIn and the AI model are local stand-ins, so you can try the whole loop without a single account.</p>
  </div>
- <div class="frame demo reveal"><img src="img/demo.gif" width="960" height="569" alt="Animated: a note is typed into the WhatsApp stub; the Fubuu backend replies, writes a post for X and one for LinkedIn and posts both."></div>
+ <div class="frame demo reveal"><picture><source media="(max-width:700px)" srcset="img/demo-m.gif" width="431" height="606"><img src="img/demo.gif" width="960" height="569" alt="Animated: a note is typed into the WhatsApp stub; the Fubuu backend replies, writes a post for X and one for LinkedIn and posts both."></picture></div>
  <p class="cap">Recorded headless from <code>demo/run.sh</code>. All people and posts are invented.</p>
 </div></section>
 
@@ -165,7 +201,7 @@ footer .r{margin-left:auto}
  <div class="steps">
   <div class="step reveal"><div class="n">01 · CAPTURE</div><h3>You send a thought</h3><p>A voice note or a text to your Fubuu WhatsApp number. Twilio forwards it to the backend.</p><code>POST /whatsapp-webhook</code></div>
   <div class="step reveal"><div class="n">02 · UNDERSTAND</div><h3>Fubuu transcribes it</h3><p>Audio becomes text with Whisper. Your plan and daily limits are checked in Redis.</p><code>FFmpeg · Whisper · Redis</code></div>
-  <div class="step reveal"><div class="n">03 · WRITE</div><h3>AI writes the post</h3><p>Your bio and optional prompt shape a hook-first post for each platform.</p><code>OpenAI · your prompt</code></div>
+  <div class="step reveal"><div class="n">03 · WRITE</div><h3>AI writes the post</h3><p>Your bio and optional prompt shape a hook&#8209;first post for each platform.</p><code>OpenAI · your prompt</code></div>
   <div class="step reveal"><div class="n">04 · PUBLISH</div><h3>Posted and confirmed</h3><p>Fubuu posts with your connected accounts, then replies on WhatsApp with what went out.</p><code>X · LinkedIn · Threads</code></div>
  </div>
 </div></section>
@@ -184,14 +220,14 @@ footer .r{margin-left:auto}
    <h3 class="serif">Written like you, per platform</h3>
    <p>Short and hook-first for X and Threads, a fuller post with a question for LinkedIn. Daily limits per platform keep your feed sane, and three gentle prompts a day, in your time zone, keep the habit going.</p>
   </div>
-  <div class="frame"><img src="img/console.webp" width="1600" height="949" alt="The demo console: a WhatsApp note on the left, the X and LinkedIn posts it produced on the right."></div>
+  <div class="frame"><picture><source media="(max-width:700px)" srcset="img/console-m.webp" width="864" height="1210"><img src="img/console.webp" width="1600" height="949" alt="The demo console: a WhatsApp note, and the X and LinkedIn posts it produced."></picture></div>
  </div>
  <div class="feat reveal">
   <div class="txt">
    <h3 class="serif">Works on the phone you already hold</h3>
    <p>There is no new app to open. Users talk to WhatsApp; the web app is only for setup, settings and billing (Stripe checkout and customer portal).</p>
   </div>
-  <div class="frame phone"><img src="img/mobile.webp" width="600" height="1298" alt="The Fubuu dashboard on a phone."></div>
+  <div class="frame phone"><img src="img/mobile.webp" width="600" height="1252" alt="The Fubuu dashboard on a phone."></div>
  </div>
 </div></section>
 
@@ -215,9 +251,15 @@ http://127.0.0.1:3000/dashboard</pre>
  </div>
 </div></section>
 
+<section class="end"><div class="wrap reveal">
+ <h2 class="serif">Take it, fork it, ship it.</h2>
+ <p class="sub">The whole product is here under MIT: backend, web app and a demo that runs offline.</p>
+ <div class="cta"><a class="btn primary" href="https://github.com/enzihub/fubuu">View on GitHub</a><a class="btn ghost" href="#start">Run the demo locally</a></div>
+</div></section>
+
 <footer><div class="wrap">
  <img src="img/fubuu.svg" alt="Fubuu">
- <span>Built by Enzi Studio in 2025, shared as-is. MIT licence.</span>
+ <span>Built by Enzi Studio in 2025, shared as&#8209;is. MIT&nbsp;licence.</span>
  <a class="r" href="https://github.com/enzihub/fubuu">github.com/enzihub/fubuu</a>
 </div></footer>
 

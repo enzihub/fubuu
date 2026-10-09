@@ -1,12 +1,11 @@
 <div align="center">
 
-<a href="https://enzihub.github.io/fubuu/">
+<a href="#see-it-work">
   <img src="assets/hero.png" width="1000" alt="Fubuu: say it out loud, post it everywhere. A WhatsApp note about founders and consistency becomes a post on X, shown as real output from the local demo.">
 </a>
 
 <br>
 
-**[Website](https://enzihub.github.io/fubuu/)** ·
 **[Demo](#see-it-work)** ·
 **[Features](#features)** ·
 **[How it works](#how-it-works)** ·
@@ -122,7 +121,7 @@ Every variable is listed, blank, in [`core/.env.example`](core/.env.example) and
 
 ## Status
 
-Built by Enzi Studio in 2025 and shared as-is; it has been dormant since. The code is the product as it was, plus the changes needed to publish it: secrets moved to env vars, analytics and tracking removed, a local demo mode, and fixed tests. The original marketing site was a hosted page builder export and is not included; [`docs/`](https://enzihub.github.io/fubuu/) is a new page.
+Built by Enzi Studio in 2025 and shared as-is; it has been dormant since. The code is the product as it was, plus the changes needed to publish it: secrets moved to env vars, analytics and tracking removed, a local demo mode, and fixed tests. The original marketing site was a hosted page builder export and is not included; [`docs/`](docs/) is a new one-page site you can open locally or host anywhere.
 
 Things to know: posting to X needs your own X developer app with write access, Threads needs a custom OAuth provider in Clerk, and the rewrite in demo mode is a simple rule-based stand-in, not a model.
 
